@@ -9,12 +9,15 @@ import { EyeIcon, EyeSlashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import {
 	createUserWithEmailAndPassword,
 	onAuthStateChanged,
+	signInWithEmailAndPassword,
+	updateProfile,
 } from "firebase/auth";
 import { auth } from "@/firebase";
 import { signInUser } from "@/redux/slices/userSlice";
 import { current } from "@reduxjs/toolkit";
 
 export default function SignUpModal() {
+	const [name, setName] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -31,6 +34,25 @@ export default function SignUpModal() {
 			email,
 			password,
 		);
+
+		console.log(userCredentials);
+
+		await updateProfile(userCredentials.user, {
+			displayName: name,
+		});
+
+		dispatch(
+			signInUser({
+				name: userCredentials.user.displayName,
+				username: userCredentials.user.email!.split("@")[0],
+				email: userCredentials.user.email,
+				uid: userCredentials.user.uid,
+			}),
+		);
+	}
+
+	async function handleGuestLogIn() {
+		await signInWithEmailAndPassword(auth, "guest12345@gmail.com", "guest123");
 	}
 
 	useEffect(() => {
@@ -40,7 +62,7 @@ export default function SignUpModal() {
 			// Handle Redux Actions
 			dispatch(
 				signInUser({
-					name: "",
+					name: currentUser.displayName,
 					username: currentUser.email!.split("@")[0],
 					email: currentUser.email,
 					uid: currentUser.uid,
@@ -77,6 +99,8 @@ export default function SignUpModal() {
 							focus:border-[#F4AF01]
 							transition"
 								placeholder="Name"
+								onChange={(event) => setName(event.target.value)}
+								value={name}
 							/>
 							<input
 								type="email"
@@ -111,7 +135,9 @@ export default function SignUpModal() {
 							Sign Up
 						</button>
 						<span className="mb-5 text-sm text-center block">Or</span>
-						<button className="bg-[#F4AF01] text-white h-[48px] rounded-full shadow-md w-full">
+						<button
+							className="bg-[#F4AF01] text-white h-[48px] rounded-full shadow-md w-full"
+							onClick={() => handleGuestLogIn()}>
 							Log In as Guest
 						</button>
 					</div>

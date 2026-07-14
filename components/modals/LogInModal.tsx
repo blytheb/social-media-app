@@ -6,14 +6,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { openLogInModal, closeLogInModal } from "@/redux/slices/modalSlice";
 import { EyeIcon, EyeSlashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase";
 
 export default function LogInModal() {
 	const [showPassword, setShowPassword] = useState(false);
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
 
 	const isOpen = useSelector((state: RootState) => state.modals.logInModalOpen);
 
 	const dispatch: AppDispatch = useDispatch();
-	console.log(isOpen);
+
+	async function handleLogIn() {
+		await signInWithEmailAndPassword(auth, email, password);
+	}
+
+	async function handleGuestLogIn() {
+		await signInWithEmailAndPassword(auth, "guest12345@gmail.com", "guest123");
+	}
 
 	return (
 		<>
@@ -33,7 +44,7 @@ export default function LogInModal() {
 						className="w-7 mt-5 ms-5 cursor-pointer"
 						onClick={() => dispatch(closeLogInModal())}
 					/>
-					<form className="pt-10 pb-20 px-4 sm:px-20">
+					<div className="pt-10 pb-20 px-4 sm:px-20">
 						<h1 className="text-3xl font-bold mb-10">Log in to Busy Bee</h1>
 						<div className="w-full space-y-5 mb-10">
 							<input
@@ -42,6 +53,8 @@ export default function LogInModal() {
 								focus:border-[#F4AF01]
 								transition"
 								placeholder="Email"
+								onChange={(event) => setEmail(event.target.value)}
+								value={email}
 							/>
 							<div
 								className="w-full h-[54px] border border-gray-200 
@@ -51,6 +64,8 @@ export default function LogInModal() {
 									type={showPassword ? "text" : "password"}
 									placeholder="Password"
 									className=" ps-3 w-full h-full outline-none"
+									onChange={(event) => setPassword(event.target.value)}
+									value={password}
 								/>
 								<div
 									onClick={() => setShowPassword(!showPassword)}
@@ -59,14 +74,18 @@ export default function LogInModal() {
 								</div>
 							</div>
 						</div>
-						<button className="bg-[#F4AF01] text-white h-[48px] rounded-full shadow-md mb-5 w-full">
+						<button
+							className="bg-[#F4AF01] text-white h-[48px] rounded-full shadow-md mb-5 w-full"
+							onClick={() => handleLogIn()}>
 							Log In
 						</button>
 						<span className="mb-5 text-sm text-center block">Or</span>
-						<button className="bg-[#F4AF01] text-white h-[48px] rounded-full shadow-md w-full">
+						<button
+							className="bg-[#F4AF01] text-white h-[48px] rounded-full shadow-md w-full"
+							onClick={() => handleGuestLogIn()}>
 							Log In as Guest
 						</button>
-					</form>
+					</div>
 				</div>
 			</Modal>
 		</>

@@ -12,6 +12,8 @@ export default function SidebarUserInfo() {
 	const dispatch: AppDispatch = useDispatch();
 	const user = useSelector((state: RootState) => state.user);
 
+	console.log(user);
+
 	async function handleSignOut() {
 		await signOut(auth);
 		dispatch(signOutUser());
