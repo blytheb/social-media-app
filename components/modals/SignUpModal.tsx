@@ -6,17 +6,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { closeSignUpModal, openSignUpModal } from "@/redux/slices/modalSlice";
 import { EyeIcon, EyeSlashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase";
 
 export default function SignUpModal() {
 	const [showPassword, setShowPassword] = useState(false);
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
 
 	const isOpen = useSelector(
 		(state: RootState) => state.modals.signUpModalOpen,
 	);
 
 	const dispatch: AppDispatch = useDispatch();
-	console.log(isOpen);
 
+	async function handleSignUp() {
+		const userCredentials = await createUserWithEmailAndPassword(
+			auth,
+			email,
+			password,
+		);
+	}
 	return (
 		<>
 			<button
@@ -34,7 +44,7 @@ export default function SignUpModal() {
 						className="w-7 mt-5 ms-5 cursor-pointer"
 						onClick={() => dispatch(closeSignUpModal())}
 					/>
-					<form className="pt-10 pb-20 px-4 sm:px-20">
+					<div className="pt-10 pb-20 px-4 sm:px-20">
 						<h1 className="text-3xl font-bold mb-10">Create your account</h1>
 						<div className="w-full space-y-5 mb-10">
 							<input
@@ -50,6 +60,8 @@ export default function SignUpModal() {
 								focus:border-[#F4AF01]
 								transition"
 								placeholder="Email"
+								onChange={(event) => setEmail(event.target.value)}
+								value={email}
 							/>
 							<div
 								className="w-full h-[54px] border border-gray-200 
@@ -59,6 +71,8 @@ export default function SignUpModal() {
 									type={showPassword ? "text" : "password"}
 									placeholder="Password"
 									className=" ps-3 w-full h-full outline-none"
+									onChange={(event) => setPassword(event.target.value)}
+									value={password}
 								/>
 								<div
 									onClick={() => setShowPassword(!showPassword)}
@@ -67,14 +81,16 @@ export default function SignUpModal() {
 								</div>
 							</div>
 						</div>
-						<button className="bg-[#F4AF01] text-white h-[48px] rounded-full shadow-md mb-5 w-full">
+						<button
+							className="bg-[#F4AF01] text-white h-[48px] rounded-full shadow-md mb-5 w-full"
+							onClick={() => handleSignUp()}>
 							Sign Up
 						</button>
 						<span className="mb-5 text-sm text-center block">Or</span>
 						<button className="bg-[#F4AF01] text-white h-[48px] rounded-full shadow-md w-full">
 							Log In as Guest
 						</button>
-					</form>
+					</div>
 				</div>
 			</Modal>
 		</>
