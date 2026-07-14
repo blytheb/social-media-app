@@ -1,5 +1,6 @@
 import React from "react";
 import SignUpModal from "./modals/SignUpModal";
+import LogInModal from "./modals/LogInModal";
 
 export default function SignUpPrompt() {
 	return (
@@ -12,9 +13,7 @@ export default function SignUpPrompt() {
 				<span>People on Busy Bee are always the first to know</span>
 			</div>
 			<div className="flex space-x-2 w-full md:w-fit p-3">
-				<button className=" w-full h-[48px] md:w-[88px] md:h-[40px] text-md md:text-sm border-2 border-gray-100 rounded-full text-white font-bold hover:bg-white hover:bg-opacity-25 transition">
-					Log in
-				</button>
+				<LogInModal />
 				<SignUpModal />
 			</div>
 		</div>
