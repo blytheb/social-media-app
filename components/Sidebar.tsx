@@ -13,7 +13,7 @@ import Image from "next/image";
 export default function Sidebar() {
 	return (
 		<nav className="hidden h-screen sm:flex flex-col sticky top-0 p-3 xl:ml-20 xl:mr-10 ">
-			<div className="relative h-full">
+			<div className="relative h-full flex flex-col items-center">
 				<div className="py-3">
 					<Image
 						src={"/assets/busybee-logo.png"}
@@ -36,7 +36,20 @@ export default function Sidebar() {
 						Bumble
 					</button>
 				</ul>
-				<div className="absolute bottom-0">User Info</div>
+				<div className="absolute bottom-3 flex items-center space-x-2 xl:p-3 xl:pe-6 rounded-full hover:bg-gray-500 hover:bg-opacity-10 transition cursor-pointer">
+					<Image
+						src={"/assets/profile-pic.png"}
+						alt="Profile Picture"
+						width={36}
+						height={36}
+						className="w-9 h-9"
+					/>
+
+					<div className="hidden xl:flex flex-col text-sm ">
+						<span className="font-bold ">sd</span>
+						<span className="text-gray-500">sd</span>
+					</div>
+				</div>
 			</div>
 		</nav>
 	);
