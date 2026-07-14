@@ -9,7 +9,7 @@ import React from "react";
 
 export default function Post() {
 	return (
-		<div>
+		<div className="border-b border-gray-100">
 			<PostHeader />
 			<div className="flex ml-16 p-3 space-x-14">
 				<div className="relative">

@@ -1,13 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { closeSignUpModal, openSignUpModal } from "@/redux/slices/modalSlice";
 import { EyeIcon, EyeSlashIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+	createUserWithEmailAndPassword,
+	onAuthStateChanged,
+} from "firebase/auth";
 import { auth } from "@/firebase";
+import { signInUser } from "@/redux/slices/userSlice";
+import { current } from "@reduxjs/toolkit";
 
 export default function SignUpModal() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +32,25 @@ export default function SignUpModal() {
 			password,
 		);
 	}
+
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+			if (!currentUser) return;
+
+			// Handle Redux Actions
+			dispatch(
+				signInUser({
+					name: "",
+					username: currentUser.email!.split("@")[0],
+					email: currentUser.email,
+					uid: currentUser.uid,
+				}),
+			);
+		});
+
+		return unsubscribe;
+	}, []);
+
 	return (
 		<>
 			<button

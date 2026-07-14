@@ -7,7 +7,7 @@ import React from "react";
 
 export default function Widgets() {
 	return (
-		<div className="p-3 hidden lg:flex flex-col space-y-4 w-[400px]">
+		<div className="p-3 hidden lg:flex flex-col space-y-4 w-[400px] ps-10">
 			<div className="flex bg-[#EFF3F4] text-[#89959D] h-[44px] items-center space-x-3 rounded-full pl-5">
 				<MagnifyingGlassIcon width={20} height={20} />
 				<input
