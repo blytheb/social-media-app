@@ -9,6 +9,10 @@ import {
 	EllipsisHorizontalCircleIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { signOut } from "firebase/auth";
+import { auth } from "@/firebase";
+import { useDispatch } from "react-redux";
+import SidebarUserInfo from "./SidebarUserInfo";
 
 export default function Sidebar() {
 	return (
@@ -36,20 +40,7 @@ export default function Sidebar() {
 						Bumble
 					</button>
 				</ul>
-				<div className="absolute bottom-3 flex items-center space-x-2 xl:p-3 xl:pe-6 rounded-full hover:bg-gray-500 hover:bg-opacity-10 transition cursor-pointer">
-					<Image
-						src={"/assets/profile-pic.png"}
-						alt="Profile Picture"
-						width={36}
-						height={36}
-						className="w-9 h-9"
-					/>
-
-					<div className="hidden xl:flex flex-col text-sm ">
-						<span className="font-bold ">sd</span>
-						<span className="text-gray-500">sd</span>
-					</div>
-				</div>
+				<SidebarUserInfo />
 			</div>
 		</nav>
 	);
