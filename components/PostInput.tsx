@@ -1,6 +1,7 @@
 "use client";
 
 import { db } from "@/firebase";
+import { closeCommentModal } from "@/redux/slices/modalSlice";
 import { RootState } from "@/redux/store";
 import {
 	CalendarIcon,
@@ -9,10 +10,17 @@ import {
 	MapPinIcon,
 	PhotoIcon,
 } from "@heroicons/react/24/outline";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+	addDoc,
+	arrayUnion,
+	collection,
+	doc,
+	serverTimestamp,
+	updateDoc,
+} from "firebase/firestore";
 import Image from "next/image";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface PostInputProps {
 	insideModal?: boolean;
@@ -21,6 +29,9 @@ interface PostInputProps {
 export default function PostInput({ insideModal }: PostInputProps) {
 	const [text, setText] = useState("");
 	const user = useSelector((state: RootState) => state.user);
+	const commentDetails = useSelector((state: RootState) => state).modals
+		.commentPostDetails;
+	const dispatch = useDispatch();
 
 	async function sendPost() {
 		await addDoc(collection(db, "posts"), {
@@ -33,6 +44,19 @@ export default function PostInput({ insideModal }: PostInputProps) {
 		});
 
 		setText("");
+	}
+
+	async function sendComment() {
+		const postRef = doc(db, "posts", commentDetails.id);
+		await updateDoc(postRef, {
+			comments: arrayUnion({
+				name: user.name,
+				username: user.username,
+				text: text,
+			}),
+		});
+		setText("");
+		dispatch(closeCommentModal());
 	}
 
 	return (
@@ -66,7 +90,7 @@ export default function PostInput({ insideModal }: PostInputProps) {
 						className="bg-[#F4AF01] text-white w-[80px] h-[36px] rounded-full text-sm cursor-pointer
 						disabled:bg-opacity-60"
 						disabled={!text}
-						onClick={() => sendPost()}>
+						onClick={() => (insideModal ? sendComment() : sendPost())}>
 						Bumble
 					</button>
 				</div>
