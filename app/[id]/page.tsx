@@ -3,6 +3,7 @@ import PostFeed from "@/components/PostFeed";
 import Sidebar from "@/components/Sidebar";
 import SignUpPrompt from "@/components/SignUpPrompt";
 import Widgets from "@/components/Widgets";
+import { db } from "@/firebase";
 import {
 	ArrowLeftIcon,
 	ArrowUpTrayIcon,
@@ -11,10 +12,33 @@ import {
 	EllipsisHorizontalIcon,
 	HeartIcon,
 } from "@heroicons/react/24/outline";
+import { doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function page() {
+const fetchPost = async (id: string) => {
+	const postRef = doc(db, "posts", id);
+	const postSnap = await getDoc(postRef);
+
+	return postSnap.data();
+};
+
+interface PageProps {
+	params: {
+		id: string;
+	};
+}
+
+interface Comment {
+	name: string;
+	text: string;
+	username: string;
+}
+
+export default async function page({ params }: PageProps) {
+	const { id } = params;
+	const post = await fetchPost(id);
+
 	return (
 		<>
 			<div className="text-[#0F1419] min-h-screen max-w-[1400px]  mx-auto flex justify-center">
@@ -43,23 +67,23 @@ export default function page() {
 									<span
 										className="font-bold  inline-block whitespace-nowrap overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px]
                      sm:max-w-[160px]">
-										zdsfasdfdsafasdfasdfasdfasdfasdfasdfddd
+										{post?.name}
 									</span>
 									<span
 										className="text-[#707E89]  inline-block whitespace-nowrap overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px] min-[500px]:max-w-[140px]
                      sm:max-w-[160px]">
-										wsrdtfasdfasdfasdfasdfasdfasdfdasfadf
+										{post?.username}
 									</span>
 								</div>
 							</div>
 							<EllipsisHorizontalIcon className="w-5 h-5" />
 						</div>
 
-						<span className="text-[15px]">Post Text</span>
+						<span className="text-[15px]">{post?.text}</span>
 					</div>
 
 					<div className="border-b border-gray-100 p-3 text-[15px]">
-						<span className="font-bold">0</span> Likes
+						<span className="font-bold">{post?.likes.length}</span> Likes
 					</div>
 
 					<div className="border-b border-gray-100 p-3 text-[15px] flex justify-evenly">
@@ -68,7 +92,14 @@ export default function page() {
 						<ChartBarIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed" />
 						<ArrowUpTrayIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed" />
 					</div>
-					<Comment />
+
+					{post?.comments.map((comment: Comment) => (
+						<Comment
+							name={comment.name}
+							username={comment.username}
+							text={comment.text}
+						/>
+					))}
 				</div>
 
 				<Widgets />
@@ -78,10 +109,16 @@ export default function page() {
 	);
 }
 
-function Comment() {
+interface CommentProps {
+	name: string;
+	username: string;
+	text: string;
+}
+
+function Comment({ name, username, text }: CommentProps) {
 	return (
 		<div className="border-b border-gray-100">
-			<PostHeader name="Alex" username="alex123" text="Hello World" />
+			<PostHeader name={name} username={username} text={text} />
 			<div className="flex space-x-14 p-3 ms-16">
 				<ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] cursor-not-allowed" />
 				<HeartIcon className="w-[22px] h-[22px] cursor-not-allowed" />
