@@ -1,3 +1,7 @@
+"use client";
+
+import { db } from "@/firebase";
+import { RootState } from "@/redux/store";
 import {
 	CalendarIcon,
 	ChartBarIcon,
@@ -5,10 +9,28 @@ import {
 	MapPinIcon,
 	PhotoIcon,
 } from "@heroicons/react/24/outline";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function PostInput() {
+	const [text, setText] = useState("");
+	const user = useSelector((state: RootState) => state.user);
+
+	async function sendPost() {
+		await addDoc(collection(db, "posts"), {
+			text: text,
+			name: user.name,
+			username: user.username,
+			timestamp: serverTimestamp(),
+			likes: [],
+			comments: [],
+		});
+
+		setText("");
+	}
+
 	return (
 		<div className="flex space-x-5 p-3 border-b border-gray-100">
 			<Image
@@ -20,8 +42,10 @@ export default function PostInput() {
 			/>
 			<div className="w-full">
 				<textarea
-					className="resize-none w-full min-h-[50px] text-lg"
+					className="resize-none w-full min-h-[50px] text-lg outline-none"
 					placeholder="What's happening?"
+					onChange={(event) => setText(event.target.value)}
+					value={text}
 				/>
 
 				<div className="flex justify-between pt-5 border-t border-gray-100">
@@ -32,7 +56,11 @@ export default function PostInput() {
 						<CalendarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
 						<MapPinIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
 					</div>
-					<button className="bg-[#F4AF01] text-white w-[80px] h-[36px] rounded-full text-sm cursor-pointer">
+					<button
+						className="bg-[#F4AF01] text-white w-[80px] h-[36px] rounded-full text-sm cursor-pointer
+						disabled:bg-opacity-60"
+						disabled={!text}
+						onClick={() => sendPost()}>
 						Bumble
 					</button>
 				</div>
