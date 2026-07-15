@@ -1,3 +1,5 @@
+"use client";
+
 import { openCommentModal, setCommentDetails } from "@/redux/slices/modalSlice";
 import {
 	ArrowUpTrayIcon,
@@ -7,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { DocumentData, Timestamp } from "firebase/firestore";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import Moment from "react-moment";
 import { useDispatch } from "react-redux";
@@ -20,12 +23,15 @@ export default function Post({ data, id }: PostProps) {
 	const dispatch = useDispatch();
 	return (
 		<div className="border-b border-gray-100">
-			<PostHeader
-				username={data.username}
-				name={data.name}
-				timestamp={data.timestamp}
-				text={data.text}
-			/>
+			<Link href={"/" + id}>
+				<PostHeader
+					username={data.username}
+					name={data.name}
+					timestamp={data.timestamp}
+					text={data.text}
+				/>
+			</Link>
+
 			<div className="flex ml-16 p-3 space-x-14">
 				<div className="relative">
 					<ChatBubbleOvalLeftEllipsisIcon
