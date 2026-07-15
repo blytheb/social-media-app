@@ -14,7 +14,11 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-export default function PostInput() {
+interface PostInputProps {
+	insideModal?: boolean;
+}
+
+export default function PostInput({ insideModal }: PostInputProps) {
 	const [text, setText] = useState("");
 	const user = useSelector((state: RootState) => state.user);
 
@@ -34,16 +38,18 @@ export default function PostInput() {
 	return (
 		<div className="flex space-x-5 p-3 border-b border-gray-100">
 			<Image
-				src={"/assets/busybee-logo.png"}
+				src={
+					insideModal ? "/assets/profile-pic.png" : "/assets/busybee-logo.png"
+				}
 				width={44}
 				height={44}
-				alt="Logo"
-				className="w-11 h-11"
+				alt={insideModal ? "Profile Pic" : "Logo"}
+				className="w-11 h-11 z-10"
 			/>
 			<div className="w-full">
 				<textarea
 					className="resize-none w-full min-h-[50px] text-lg outline-none"
-					placeholder="What's happening?"
+					placeholder={insideModal ? "Send your reply" : "What's happening?"}
 					onChange={(event) => setText(event.target.value)}
 					value={text}
 				/>

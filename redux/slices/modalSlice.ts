@@ -1,8 +1,16 @@
+import CommentModal from "@/components/modals/CommentModal";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
 	signUpModalOpen: false,
 	logInModalOpen: false,
+	commentModalOpen: false,
+	commentPostDetails: {
+		name: "",
+		username: "",
+		id: "",
+		text: "",
+	},
 };
 
 const modalSlice = createSlice({
@@ -21,6 +29,18 @@ const modalSlice = createSlice({
 		closeLogInModal: (state) => {
 			state.logInModalOpen = false;
 		},
+		openCommentModal: (state) => {
+			state.commentModalOpen = true;
+		},
+		closeCommentModal: (state) => {
+			state.commentModalOpen = false;
+		},
+		setCommentDetails: (state, action) => {
+			state.commentPostDetails.name = action.payload.name;
+			state.commentPostDetails.username = action.payload.username;
+			state.commentPostDetails.id = action.payload.id;
+			state.commentPostDetails.text = action.payload.text;
+		},
 	},
 });
 
@@ -29,6 +49,9 @@ export const {
 	closeSignUpModal,
 	openLogInModal,
 	closeLogInModal,
+	openCommentModal,
+	closeCommentModal,
+	setCommentDetails,
 } = modalSlice.actions;
 
 export default modalSlice.reducer;

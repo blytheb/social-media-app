@@ -1,3 +1,4 @@
+import { openCommentModal, setCommentDetails } from "@/redux/slices/modalSlice";
 import {
 	ArrowUpTrayIcon,
 	ChartBarIcon,
@@ -8,14 +9,15 @@ import { DocumentData, Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import React from "react";
 import Moment from "react-moment";
+import { useDispatch } from "react-redux";
 
 interface PostProps {
 	data: DocumentData;
+	id: string;
 }
 
-export default function Post({ data }: PostProps) {
-	console.log(data);
-
+export default function Post({ data, id }: PostProps) {
+	const dispatch = useDispatch();
 	return (
 		<div className="border-b border-gray-100">
 			<PostHeader
@@ -26,7 +28,20 @@ export default function Post({ data }: PostProps) {
 			/>
 			<div className="flex ml-16 p-3 space-x-14">
 				<div className="relative">
-					<ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] cursor-pointer hover:text-[#F4AF01] transition" />
+					<ChatBubbleOvalLeftEllipsisIcon
+						className="w-[22px] h-[22px] cursor-pointer hover:text-[#F4AF01] transition"
+						onClick={() => {
+							dispatch(
+								setCommentDetails({
+									name: data.name,
+									username: data.username,
+									id: id,
+									text: data.text,
+								}),
+							);
+							dispatch(openCommentModal());
+						}}
+					/>
 					<span className="absolute text-xs top-1 -right-3">2</span>
 				</div>
 				<div className="relative">
@@ -47,8 +62,9 @@ export default function Post({ data }: PostProps) {
 interface PostHeaderProps {
 	username: string;
 	name: string;
-	timestamp: Timestamp;
+	timestamp?: Timestamp;
 	text: string;
+	replyTo?: string;
 }
 
 export function PostHeader({
@@ -56,6 +72,7 @@ export function PostHeader({
 	name,
 	timestamp,
 	text,
+	replyTo,
 }: PostHeaderProps) {
 	return (
 		<div className="flex p-3 space-x-5">
@@ -64,7 +81,7 @@ export function PostHeader({
 				alt="Profile Picture"
 				width={44}
 				height={44}
-				className="w-11 h-11"
+				className="w-11 h-11 z-10 bg-white"
 			/>
 
 			<div className="text-[15px] flex flex-col space-y-1.5">
@@ -80,10 +97,19 @@ export function PostHeader({
                      sm:max-w-[160px]">
 						@{username}
 					</span>
-					<span>.</span>
-					{timestamp && <Moment fromNow>{timestamp.toDate()}</Moment>}
+					{timestamp && (
+						<>
+							<span>.</span>
+							<Moment fromNow>{timestamp.toDate()}</Moment>
+						</>
+					)}
 				</div>
 				<span>{text}</span>
+				{replyTo && (
+					<span className="text-[15px] text-[#707E89]">
+						Replying to <span className="text-[#F4AF01]">@{replyTo}</span>
+					</span>
+				)}
 			</div>
 		</div>
 	);
